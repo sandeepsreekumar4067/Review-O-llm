@@ -150,7 +150,7 @@ chain = review_response_template | llm | parser
 reviews = restaurant_reviews["reviews"]
 response_json=[]
 
-for review,no in enumerate(reviews):
+for no,review in enumerate(reviews):
     name = review["customer_name"]
     rating = review["rating"]
     text = review["review_text"]

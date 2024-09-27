@@ -188,7 +188,7 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "reviews = restaurant_reviews[\"reviews\"]\nresponse_json=[]\nfor review,no in enumerate(reviews):\n    name = review[\"customer_name\"]\n    rating = review[\"rating\"]\n    text = review[\"review_text\"]\n    print(\"{\\n\",\"name:\",name,\"\\n\",\"rating:\",rating,\"\\n\",\"review:\",text,\"\\n\",\"}\")\n    response = chain.invoke({\"review_content\":text,\"name\":name,\"rating\":rating})\n    response_json.append({\n        \"id\":review[\"review_id\"],",
+        "peekOfCode": "reviews = restaurant_reviews[\"reviews\"]\nresponse_json=[]\nfor no,review in enumerate(reviews):\n    name = review[\"customer_name\"]\n    rating = review[\"rating\"]\n    text = review[\"review_text\"]\n    print(\"{\\n\",\"name:\",name,\"\\n\",\"rating:\",rating,\"\\n\",\"review:\",text,\"\\n\",\"}\")\n    response = chain.invoke({\"review_content\":text,\"name\":name,\"rating\":rating})\n    response_json.append({\n        \"id\":review[\"review_id\"],",
         "detail": "reviewBot",
         "documentation": {}
     },
