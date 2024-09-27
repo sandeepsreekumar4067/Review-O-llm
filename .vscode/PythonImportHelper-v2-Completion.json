@@ -1,5 +1,14 @@
 [
     {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
         "label": "PyPDFLoader",
         "importPath": "langchain_community.document_loaders",
         "description": "langchain_community.document_loaders",
@@ -112,11 +121,44 @@
         "documentation": {}
     },
     {
+        "label": "FastAPI",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "Request",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "reviews",
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "isExtraImport": true,
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
+        "label": "home",
+        "kind": 2,
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "peekOfCode": "def home():\n    return {\n        \"hello\"\n    }\n@app.post('/ai')\nasync def ai(request:Request):\n    body = await request.json()\n    print(\"Request recieved\")\n    reviews = body['reviews']\n    for no,review in enumerate(reviews):",
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
         "label": "llm",
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "llm = ChatOllama(\n    model=\"llama3.1\",\n    temperature=0.7,\n)\nprint(\"ollama loaded\")\nembedding_model = OllamaEmbeddings(model=\"llama3.1\")\nprint(\"embeddings model created\")\nparser = StrOutputParser()\ntext_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=1024, chunk_overlap=200, length_function=len",
+        "peekOfCode": "llm = ChatOllama(\n    model=\"llama3.1\",\n    temperature=0.7,\n)\nprint(\"ollama loaded\")\nembedding_model = OllamaEmbeddings(model=\"llama3.1\")\nprint(\"embeddings model created\")\nparser = StrOutputParser()\napp = FastAPI()\ntext_splitter = RecursiveCharacterTextSplitter(",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -125,7 +167,7 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "embedding_model = OllamaEmbeddings(model=\"llama3.1\")\nprint(\"embeddings model created\")\nparser = StrOutputParser()\ntext_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=1024, chunk_overlap=200, length_function=len\n)\nchat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.\n        reply in a warm and professional manner just like how a professional human hotel manager would reply .",
+        "peekOfCode": "embedding_model = OllamaEmbeddings(model=\"llama3.1\")\nprint(\"embeddings model created\")\nparser = StrOutputParser()\napp = FastAPI()\ntext_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=1024, chunk_overlap=200, length_function=len\n)\nchat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -134,7 +176,16 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "parser = StrOutputParser()\ntext_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=1024, chunk_overlap=200, length_function=len\n)\nchat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.\n        reply in a warm and professional manner just like how a professional human hotel manager would reply .\n        Input :{input}\n    \"\"\"",
+        "peekOfCode": "parser = StrOutputParser()\napp = FastAPI()\ntext_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=1024, chunk_overlap=200, length_function=len\n)\nchat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.\n        reply in a warm and professional manner just like how a professional human hotel manager would reply .\n        Input :{input}",
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "peekOfCode": "app = FastAPI()\ntext_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=1024, chunk_overlap=200, length_function=len\n)\nchat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.\n        reply in a warm and professional manner just like how a professional human hotel manager would reply .\n        Input :{input}\n    \"\"\"",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -188,7 +239,7 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "reviews = restaurant_reviews[\"reviews\"]\nresponse_json=[]\nfor no,review in enumerate(reviews):\n    name = review[\"customer_name\"]\n    rating = review[\"rating\"]\n    text = review[\"review_text\"]\n    print(\"{\\n\",\"name:\",name,\"\\n\",\"rating:\",rating,\"\\n\",\"review:\",text,\"\\n\",\"}\")\n    response = chain.invoke({\"review_content\":text,\"name\":name,\"rating\":rating})\n    response_json.append({\n        \"id\":review[\"review_id\"],",
+        "peekOfCode": "reviews = restaurant_reviews[\"reviews\"]\nresponse_json=[]\n# for no,review in enumerate(reviews):\n#     name = review[\"customer_name\"]\n#     rating = review[\"rating\"]\n#     text = review[\"review_text\"]\n#     print(\"{\\n\",\"name:\",name,\"\\n\",\"rating:\",rating,\"\\n\",\"review:\",text,\"\\n\",\"}\")\n#     response = chain.invoke({\"review_content\":text,\"name\":name,\"rating\":rating})\n#     response_json.append({\n#         \"id\":review[\"review_id\"],",
         "detail": "reviewBot",
         "documentation": {}
     },

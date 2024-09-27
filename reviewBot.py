@@ -11,7 +11,8 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_community.chat_message_histories import ChatMessageHistory
 from sklearn.metrics.pairwise import cosine_similarity
-
+from fastapi import FastAPI,Request
+from reviewBot import reviews
 print("initialising the llm")
 llm = ChatOllama(
     model="llama3.1",
@@ -22,6 +23,8 @@ embedding_model = OllamaEmbeddings(model="llama3.1")
 print("embeddings model created")
 parser = StrOutputParser()
 
+
+app = FastAPI()
 
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=1024, chunk_overlap=200, length_function=len
@@ -150,19 +153,50 @@ chain = review_response_template | llm | parser
 reviews = restaurant_reviews["reviews"]
 response_json=[]
 
-for no,review in enumerate(reviews):
-    name = review["customer_name"]
-    rating = review["rating"]
-    text = review["review_text"]
-    print("{\n","name:",name,"\n","rating:",rating,"\n","review:",text,"\n","}")
-    response = chain.invoke({"review_content":text,"name":name,"rating":rating})
-    response_json.append({
-        "id":review["review_id"],
-        "customer":name,
-        "date":review["date"],
-        "customer_rating":rating,
-        "customer_review":review,
-        "ai_response":response
-    })
-    print("processed ",no, " out of ",len(reviews),"reviews\n")
-print(response_json)
+# for no,review in enumerate(reviews):
+#     name = review["customer_name"]
+#     rating = review["rating"]
+#     text = review["review_text"]
+#     print("{\n","name:",name,"\n","rating:",rating,"\n","review:",text,"\n","}")
+#     response = chain.invoke({"review_content":text,"name":name,"rating":rating})
+#     response_json.append({
+#         "id":review["review_id"],
+#         "customer":name,
+#         "date":review["date"],
+#         "customer_rating":rating,
+#         "customer_review":text,
+#         "ai_response":response
+#     })
+#     print("processed ",no, " out of ",len(reviews),"reviews\n")
+#     print("Ai response ",response)
+# print(response_json)
+@app.get('/')
+def home():
+    return {
+        "hello"
+    }
+@app.post('/ai')
+async def ai(request:Request):
+    body = await request.json()
+    print("Request recieved")
+    reviews = body['reviews']
+    for no,review in enumerate(reviews):
+        name = review['customer_name']
+        rating = review['rating']
+        text = review['review_text']
+        print('received data :\n')
+        print("{\n","name:",name,"\n","rating:",rating,"\n","review:",text,"\n","}")
+        response = chain.invoke({"review_content":text,"name":name,"rating":rating})
+        print("response",no+1,"generated out of ",len(reviews))
+        response_json.append({
+            "id":review["review_id"],
+            "customer":name,
+            "date":review["date"],
+            "customer_rating":rating,
+            "customer_review":text,
+            "ai_response":response
+        })
+    print("\nfinished processing...\nsuccessfully returned the response")
+    return {
+        response_json
+    }
