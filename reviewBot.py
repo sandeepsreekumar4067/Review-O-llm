@@ -21,6 +21,13 @@ print("ollama loaded")
 embedding_model = OllamaEmbeddings(model="llama3.1")
 print("embeddings model created")
 parser = StrOutputParser()
+
+
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1024, chunk_overlap=200, length_function=len
+)
+
+
 chat_prompt = PromptTemplate.from_template(
     """
         you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.
@@ -50,6 +57,39 @@ review_response_template = ChatPromptTemplate.from_messages(
         ),
     ]
 )
+examples = {
+    "contextual": [
+        "good","bad","wait","long","wouldnt reccomend"
+    ],
+    "casual": [
+        "hi","hello","hey","oh"
+    ]
+}
+threshold = 1.4
+legal_embeddings = embedding_model.embed_documents(examples["contextual"])
+casual_embeddings = embedding_model.embed_documents(examples["casual"])
+def classify_query(query):
+    # Embed the query
+    query_embedding = embedding_model.embed_documents([query])
+
+    # Calculate similarities
+
+    legal_similarity = cosine_similarity(query_embedding, legal_embeddings)
+    casual_similarity = cosine_similarity(query_embedding, casual_embeddings)
+
+    # Get the maximum similarity score for legal and casual categories
+    max_legal_similarity = max(legal_similarity[0])
+    max_casual_similarity = max(casual_similarity[0])
+
+    # Set a threshold for classifying the query
+    threshold = 0.4
+
+    # Compare similarities to classify as legal or casual
+    if max_legal_similarity > threshold and max_legal_similarity > max_casual_similarity:
+        return {"status":"legal","score":max_legal_similarity}
+    else:
+        return {"status":"casual","score":max_casual_similarity}
+
 print("model ready")
 chain = review_response_template | llm | parser
 while 1:
@@ -59,9 +99,3 @@ while 1:
     review = input("Enter the review :")
     response = chain.invoke({"review_content": review,"name":name})
     print(response)
-# while 1:
-#     review = input("Enter the review : ")
-#     response = review_response_template.format(
-#         review_content=review
-#     )
-# The food was delicious, but the wait was too long. I might visit again, but only if service improves.

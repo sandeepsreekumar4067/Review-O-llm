@@ -112,11 +112,20 @@
         "documentation": {}
     },
     {
+        "label": "classify_query",
+        "kind": 2,
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "peekOfCode": "def classify_query(query):\n    # Embed the query\n    query_embedding = embedding_model.embed_documents([query])\n    # Calculate similarities\n    legal_similarity = cosine_similarity(query_embedding, legal_embeddings)\n    casual_similarity = cosine_similarity(query_embedding, casual_embeddings)\n    # Get the maximum similarity score for legal and casual categories\n    max_legal_similarity = max(legal_similarity[0])\n    max_casual_similarity = max(casual_similarity[0])\n    # Set a threshold for classifying the query",
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
         "label": "llm",
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "llm = ChatOllama(\n    model=\"llama3.1\",\n    temperature=0.7,\n)\nprint(\"ollama loaded\")\nembedding_model = OllamaEmbeddings(model=\"llama3.1\")\nprint(\"embeddings model created\")\nparser = StrOutputParser()\nchat_prompt = PromptTemplate.from_template(\n    \"\"\"",
+        "peekOfCode": "llm = ChatOllama(\n    model=\"llama3.1\",\n    temperature=0.7,\n)\nprint(\"ollama loaded\")\nembedding_model = OllamaEmbeddings(model=\"llama3.1\")\nprint(\"embeddings model created\")\nparser = StrOutputParser()\ntext_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=1024, chunk_overlap=200, length_function=len",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -125,7 +134,7 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "embedding_model = OllamaEmbeddings(model=\"llama3.1\")\nprint(\"embeddings model created\")\nparser = StrOutputParser()\nchat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.\n        reply in a warm and professional manner just like how a professional human hotel manager would reply .\n        Input :{input}\n    \"\"\"\n)",
+        "peekOfCode": "embedding_model = OllamaEmbeddings(model=\"llama3.1\")\nprint(\"embeddings model created\")\nparser = StrOutputParser()\ntext_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=1024, chunk_overlap=200, length_function=len\n)\nchat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.\n        reply in a warm and professional manner just like how a professional human hotel manager would reply .",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -134,7 +143,16 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "parser = StrOutputParser()\nchat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.\n        reply in a warm and professional manner just like how a professional human hotel manager would reply .\n        Input :{input}\n    \"\"\"\n)\nreview_response_template = ChatPromptTemplate.from_messages(\n    [",
+        "peekOfCode": "parser = StrOutputParser()\ntext_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=1024, chunk_overlap=200, length_function=len\n)\nchat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.\n        reply in a warm and professional manner just like how a professional human hotel manager would reply .\n        Input :{input}\n    \"\"\"",
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
+        "label": "text_splitter",
+        "kind": 5,
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "peekOfCode": "text_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=1024, chunk_overlap=200, length_function=len\n)\nchat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.\n        reply in a warm and professional manner just like how a professional human hotel manager would reply .\n        Input :{input}\n    \"\"\"\n)",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -157,11 +175,47 @@
         "documentation": {}
     },
     {
+        "label": "examples",
+        "kind": 5,
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "peekOfCode": "examples = {\n    \"contextual\": [\n        \"good\",\"bad\",\"wait\",\"long\",\"wouldnt reccomend\"\n    ],\n    \"casual\": [\n        \"hi\",\"hello\",\"hey\",\"oh\"\n    ]\n}\nthreshold = 1.4\nlegal_embeddings = embedding_model.embed_documents(examples[\"contextual\"])",
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
+        "label": "threshold",
+        "kind": 5,
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "peekOfCode": "threshold = 1.4\nlegal_embeddings = embedding_model.embed_documents(examples[\"contextual\"])\ncasual_embeddings = embedding_model.embed_documents(examples[\"casual\"])\ndef classify_query(query):\n    # Embed the query\n    query_embedding = embedding_model.embed_documents([query])\n    # Calculate similarities\n    legal_similarity = cosine_similarity(query_embedding, legal_embeddings)\n    casual_similarity = cosine_similarity(query_embedding, casual_embeddings)\n    # Get the maximum similarity score for legal and casual categories",
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
+        "label": "legal_embeddings",
+        "kind": 5,
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "peekOfCode": "legal_embeddings = embedding_model.embed_documents(examples[\"contextual\"])\ncasual_embeddings = embedding_model.embed_documents(examples[\"casual\"])\ndef classify_query(query):\n    # Embed the query\n    query_embedding = embedding_model.embed_documents([query])\n    # Calculate similarities\n    legal_similarity = cosine_similarity(query_embedding, legal_embeddings)\n    casual_similarity = cosine_similarity(query_embedding, casual_embeddings)\n    # Get the maximum similarity score for legal and casual categories\n    max_legal_similarity = max(legal_similarity[0])",
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
+        "label": "casual_embeddings",
+        "kind": 5,
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "peekOfCode": "casual_embeddings = embedding_model.embed_documents(examples[\"casual\"])\ndef classify_query(query):\n    # Embed the query\n    query_embedding = embedding_model.embed_documents([query])\n    # Calculate similarities\n    legal_similarity = cosine_similarity(query_embedding, legal_embeddings)\n    casual_similarity = cosine_similarity(query_embedding, casual_embeddings)\n    # Get the maximum similarity score for legal and casual categories\n    max_legal_similarity = max(legal_similarity[0])\n    max_casual_similarity = max(casual_similarity[0])",
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
         "label": "chain",
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "chain = review_response_template | llm | parser\nwhile 1:\n    name = input(\"Enter the name :\")\n    if name.lower() == 'bye':\n        break\n    review = input(\"Enter the review :\")\n    response = chain.invoke({\"review_content\": review,\"name\":name})\n    print(response)\n# while 1:\n#     review = input(\"Enter the review : \")",
+        "peekOfCode": "chain = review_response_template | llm | parser\nwhile 1:\n    name = input(\"Enter the name :\")\n    if name.lower() == 'bye':\n        break\n    review = input(\"Enter the review :\")\n    response = chain.invoke({\"review_content\": review,\"name\":name})\n    print(response)",
         "detail": "reviewBot",
         "documentation": {}
     }
