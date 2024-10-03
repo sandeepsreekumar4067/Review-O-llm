@@ -12,7 +12,7 @@ from langchain_core.messages import HumanMessage, AIMessage
 from langchain_community.chat_message_histories import ChatMessageHistory
 from sklearn.metrics.pairwise import cosine_similarity
 from fastapi import FastAPI,Request
-from reviewBot import reviews
+from fastapi.middleware.cors import CORSMiddleware
 print("initialising the llm")
 llm = ChatOllama(
     model="llama3.1",
@@ -25,7 +25,13 @@ parser = StrOutputParser()
 
 
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # You can use "*" for testing, but restrict to specific URLs in production
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=1024, chunk_overlap=200, length_function=len
 )
@@ -52,7 +58,8 @@ review_response_template = ChatPromptTemplate.from_messages(
             "Customer Name: {name}\n"
             "Review: {review_content}\n"
             "manager name : restaurant manager\n"
-            "customer rating:{rating}",
+            "customer rating:{rating}\n"
+            "restaurant name :{restaurant_name}",
         ),
         (
             "assistant",
@@ -150,7 +157,7 @@ chain = review_response_template | llm | parser
 #     review = input("Enter the review :")
 #     response = chain.invoke({"review_content": review, "name": name})
 #     print(response)
-reviews = restaurant_reviews["reviews"]
+# reviews = restaurant_reviews["reviews"]
 response_json=[]
 
 # for no,review in enumerate(reviews):
@@ -175,28 +182,71 @@ def home():
     return {
         "hello"
     }
+# @app.post('/ai')
+# async def ai(request:Request):
+#     body = await request.json()
+#     print("Request recieved")
+#     reviews = body['reviews']
+#     restaurant_name = body['restaurant_name']
+#     for no,review in enumerate(reviews):
+#         name = review['customer_name'],
+#         rating = review['rating']
+#         text = review['review_text']
+#         print('received data :\n')
+#         print("{\n","name:",name,"\n","rating:",rating,"\n","review:",text,"\n","}")
+#         response = chain.invoke({"review_content":text,"name":name,"rating":rating,"restaurant_name":restaurant_name})
+#         print("response",no+1,"generated out of ",len(reviews))
+#         response_json.append({
+#             "restaurant":restaurant_name,
+#             "customer_id":review["review_id"],
+#             "customer":name,
+#             "date":review["date"],
+#             "customer_rating":rating,
+#             "customer_review":text,
+#             "ai_response":response
+#         })
+#         print("{\n","restaurant_name :",restaurant_name,"\nid :",review["review_id"],"\ncustomer :",name,"\ndate :",review["date"],"\ncustomer_rating :",rating,"\ncustomer_review :",text,"\nai_response :",response,"\n}")
+#     print("\nfinished processing...\nsuccessfully returned the response")
+#     return response_json
 @app.post('/ai')
-async def ai(request:Request):
+async def ai(request: Request):
+    # Initialize the response list for each request to prevent shared state issues
+    response_json = []
+
     body = await request.json()
-    print("Request recieved")
+    print("Request received")
     reviews = body['reviews']
-    for no,review in enumerate(reviews):
+    restaurant_name = body['restaurant_name']
+
+    for no, review in enumerate(reviews):
         name = review['customer_name']
         rating = review['rating']
         text = review['review_text']
+        
         print('received data :\n')
-        print("{\n","name:",name,"\n","rating:",rating,"\n","review:",text,"\n","}")
-        response = chain.invoke({"review_content":text,"name":name,"rating":rating})
-        print("response",no+1,"generated out of ",len(reviews))
+        print("{\n", "name:", name, "\n", "rating:", rating, "\n", "review:", text, "\n", "}")
+
+        try:
+            # Generate response using the LLM chain
+            response = chain.invoke({"review_content": text, "name": name, "rating": rating, "restaurant_name": restaurant_name})
+        except Exception as e:
+            # Print any errors that occur during processing
+            print(f"Error generating response for review {no+1}: {e}")
+            response = "An error occurred while generating the response."
+
+        print("response", no+1, "generated out of", len(reviews))
+
         response_json.append({
-            "id":review["review_id"],
-            "customer":name,
-            "date":review["date"],
-            "customer_rating":rating,
-            "customer_review":text,
-            "ai_response":response
+            "restaurant": restaurant_name,
+            "customer_id": review["review_id"],
+            "customer": name,
+            "date": review["date"],
+            "customer_rating": rating,
+            "customer_review": text,
+            "ai_response": response
         })
+
+        print("{\n", "restaurant_name:", restaurant_name, "\nid:", review["review_id"], "\ncustomer:", name, "\ndate:", review["date"], "\ncustomer_rating:", rating, "\ncustomer_review:", text, "\nai_response:", response, "\n}")
+
     print("\nfinished processing...\nsuccessfully returned the response")
-    return {
-        response_json
-    }
+    return response_json

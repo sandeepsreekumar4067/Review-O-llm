@@ -137,11 +137,29 @@
         "documentation": {}
     },
     {
-        "label": "reviews",
-        "importPath": "reviewBot",
-        "description": "reviewBot",
+        "label": "CORSMiddleware",
+        "importPath": "fastapi.middleware.cors",
+        "description": "fastapi.middleware.cors",
         "isExtraImport": true,
-        "detail": "reviewBot",
+        "detail": "fastapi.middleware.cors",
+        "documentation": {}
+    },
+    {
+        "label": "restaurant_reviews",
+        "kind": 5,
+        "importPath": "request",
+        "description": "request",
+        "peekOfCode": "restaurant_reviews = {\n    \"restaurant_name\": \"The Gourmet Spot\",\n    \"reviews\": [\n        {\n            \"review_id\": 1,\n            \"customer_name\": \"John Doe\",\n            \"rating\": 5,\n            \"review_text\": \"The food was exceptional! Great ambiance and the staff were very attentive. Will definitely come back!\",\n            \"date\": \"2023-09-12\",\n        },",
+        "detail": "request",
+        "documentation": {}
+    },
+    {
+        "label": "response",
+        "kind": 5,
+        "importPath": "request",
+        "description": "request",
+        "peekOfCode": "response = requests.post('http://127.0.0.1:8000/ai',json=restaurant_reviews)\nprint(response.status_code)\nprint(response.json())",
+        "detail": "request",
         "documentation": {}
     },
     {
@@ -149,7 +167,7 @@
         "kind": 2,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "def home():\n    return {\n        \"hello\"\n    }\n@app.post('/ai')\nasync def ai(request:Request):\n    body = await request.json()\n    print(\"Request recieved\")\n    reviews = body['reviews']\n    for no,review in enumerate(reviews):",
+        "peekOfCode": "def home():\n    return {\n        \"hello\"\n    }\n# @app.post('/ai')\n# async def ai(request:Request):\n#     body = await request.json()\n#     print(\"Request recieved\")\n#     reviews = body['reviews']\n#     restaurant_name = body['restaurant_name']",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -158,7 +176,7 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "llm = ChatOllama(\n    model=\"llama3.1\",\n    temperature=0.7,\n)\nprint(\"ollama loaded\")\nembedding_model = OllamaEmbeddings(model=\"llama3.1\")\nprint(\"embeddings model created\")\nparser = StrOutputParser()\napp = FastAPI()\ntext_splitter = RecursiveCharacterTextSplitter(",
+        "peekOfCode": "llm = ChatOllama(\n    model=\"llama3.1\",\n    temperature=0.7,\n)\nprint(\"ollama loaded\")\nembedding_model = OllamaEmbeddings(model=\"llama3.1\")\nprint(\"embeddings model created\")\nparser = StrOutputParser()\napp = FastAPI()\napp.add_middleware(",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -167,7 +185,7 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "embedding_model = OllamaEmbeddings(model=\"llama3.1\")\nprint(\"embeddings model created\")\nparser = StrOutputParser()\napp = FastAPI()\ntext_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=1024, chunk_overlap=200, length_function=len\n)\nchat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.",
+        "peekOfCode": "embedding_model = OllamaEmbeddings(model=\"llama3.1\")\nprint(\"embeddings model created\")\nparser = StrOutputParser()\napp = FastAPI()\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],  # You can use \"*\" for testing, but restrict to specific URLs in production\n    allow_credentials=True,\n    allow_methods=[\"*\"],  # Allow all HTTP methods\n    allow_headers=[\"*\"],  # Allow all headers",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -176,7 +194,7 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "parser = StrOutputParser()\napp = FastAPI()\ntext_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=1024, chunk_overlap=200, length_function=len\n)\nchat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.\n        reply in a warm and professional manner just like how a professional human hotel manager would reply .\n        Input :{input}",
+        "peekOfCode": "parser = StrOutputParser()\napp = FastAPI()\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],  # You can use \"*\" for testing, but restrict to specific URLs in production\n    allow_credentials=True,\n    allow_methods=[\"*\"],  # Allow all HTTP methods\n    allow_headers=[\"*\"],  # Allow all headers\n)\ntext_splitter = RecursiveCharacterTextSplitter(",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -185,7 +203,7 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "app = FastAPI()\ntext_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=1024, chunk_overlap=200, length_function=len\n)\nchat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.\n        reply in a warm and professional manner just like how a professional human hotel manager would reply .\n        Input :{input}\n    \"\"\"",
+        "peekOfCode": "app = FastAPI()\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],  # You can use \"*\" for testing, but restrict to specific URLs in production\n    allow_credentials=True,\n    allow_methods=[\"*\"],  # Allow all HTTP methods\n    allow_headers=[\"*\"],  # Allow all headers\n)\ntext_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=1024, chunk_overlap=200, length_function=len",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -230,26 +248,8 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "chain = review_response_template | llm | parser\n# while 1:\n#     name = input(\"Enter the name :\")\n#     if name.lower() == \"bye\":\n#         break\n#     review = input(\"Enter the review :\")\n#     response = chain.invoke({\"review_content\": review, \"name\": name})\n#     print(response)\nreviews = restaurant_reviews[\"reviews\"]\nresponse_json=[]",
+        "peekOfCode": "chain = review_response_template | llm | parser\n# while 1:\n#     name = input(\"Enter the name :\")\n#     if name.lower() == \"bye\":\n#         break\n#     review = input(\"Enter the review :\")\n#     response = chain.invoke({\"review_content\": review, \"name\": name})\n#     print(response)\n# reviews = restaurant_reviews[\"reviews\"]\nresponse_json=[]",
         "detail": "reviewBot",
-        "documentation": {}
-    },
-    {
-        "label": "reviews",
-        "kind": 5,
-        "importPath": "reviewBot",
-        "description": "reviewBot",
-        "peekOfCode": "reviews = restaurant_reviews[\"reviews\"]\nresponse_json=[]\n# for no,review in enumerate(reviews):\n#     name = review[\"customer_name\"]\n#     rating = review[\"rating\"]\n#     text = review[\"review_text\"]\n#     print(\"{\\n\",\"name:\",name,\"\\n\",\"rating:\",rating,\"\\n\",\"review:\",text,\"\\n\",\"}\")\n#     response = chain.invoke({\"review_content\":text,\"name\":name,\"rating\":rating})\n#     response_json.append({\n#         \"id\":review[\"review_id\"],",
-        "detail": "reviewBot",
-        "documentation": {}
-    },
-    {
-        "label": "examples",
-        "kind": 5,
-        "importPath": "tempCodeRunnerFile",
-        "description": "tempCodeRunnerFile",
-        "peekOfCode": "examples = {\n#     \"contextual\": [\"good\", \"bad\", \"wait\", \"long\", \"wouldnt reccomend\"],\n#     \"casual\": [\"hi\", \"hello\", \"hey\", \"oh\"],\n# }\n# threshold = 1.4\n# legal_embeddings = embedding_model.embed_documents(examples[\"contextual\"])\n# casual_embeddings = embedding_model.embed_documents(examples[\"casual\"])\n# def classify_query(query):\n#     # Embed the query\n#     query_embedding = embedding_model.embed_documents([query])",
-        "detail": "tempCodeRunnerFile",
         "documentation": {}
     }
 ]
