@@ -145,6 +145,14 @@
         "documentation": {}
     },
     {
+        "label": "friendly_llm",
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "isExtraImport": true,
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
         "label": "restaurant_reviews",
         "kind": 5,
         "importPath": "request",
@@ -167,16 +175,34 @@
         "kind": 2,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "def home():\n    return {\n        \"hello\"\n    }\n# @app.post('/ai')\n# async def ai(request:Request):\n#     body = await request.json()\n#     print(\"Request recieved\")\n#     reviews = body['reviews']\n#     restaurant_name = body['restaurant_name']",
+        "peekOfCode": "def home():\n    return {\n        \"hello\"\n    }\n@app.post('/friendly_ai')\nasync def ai(request: Request):\n    # Initialize the response list for each request to prevent shared state issues\n    response_json = []\n    body = await request.json()\n    print(\"Request received\")",
         "detail": "reviewBot",
         "documentation": {}
     },
     {
-        "label": "llm",
+        "label": "friendly_llm",
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "llm = ChatOllama(\n    model=\"llama3.1\",\n    temperature=0.7,\n)\nprint(\"ollama loaded\")\nembedding_model = OllamaEmbeddings(model=\"llama3.1\")\nprint(\"embeddings model created\")\nparser = StrOutputParser()\napp = FastAPI()\napp.add_middleware(",
+        "peekOfCode": "friendly_llm = ChatOllama(\n    model=\"llama3.1\",\n    temperature=0.7,\n)\ncasual_llm = ChatOllama(\n    model='llama3.1',\n    temperature=0.5\n)\nprofessional_llm = ChatOllama(\n    model='llama3.1',",
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
+        "label": "casual_llm",
+        "kind": 5,
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "peekOfCode": "casual_llm = ChatOllama(\n    model='llama3.1',\n    temperature=0.5\n)\nprofessional_llm = ChatOllama(\n    model='llama3.1',\n    temperature=0.2\n)\nprint(\"ollama loaded\")\nembedding_model = OllamaEmbeddings(model=\"llama3.1\")",
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
+        "label": "professional_llm",
+        "kind": 5,
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "peekOfCode": "professional_llm = ChatOllama(\n    model='llama3.1',\n    temperature=0.2\n)\nprint(\"ollama loaded\")\nembedding_model = OllamaEmbeddings(model=\"llama3.1\")\nprint(\"embeddings model created\")\nparser = StrOutputParser()\napp = FastAPI()\napp.add_middleware(",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -244,11 +270,29 @@
         "documentation": {}
     },
     {
-        "label": "chain",
+        "label": "firendnly_llm_chain",
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "chain = review_response_template | llm | parser\n# while 1:\n#     name = input(\"Enter the name :\")\n#     if name.lower() == \"bye\":\n#         break\n#     review = input(\"Enter the review :\")\n#     response = chain.invoke({\"review_content\": review, \"name\": name})\n#     print(response)\n# reviews = restaurant_reviews[\"reviews\"]\nresponse_json=[]",
+        "peekOfCode": "firendnly_llm_chain = review_response_template | friendly_llm | parser\ncasual_llm_chain = review_response_template | casual_llm | parser\nprofessional_llm_chain = review_response_template | professional_llm | parser\nresponse_json=[]\n@app.get('/')\ndef home():\n    return {\n        \"hello\"\n    }\n@app.post('/friendly_ai')",
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
+        "label": "casual_llm_chain",
+        "kind": 5,
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "peekOfCode": "casual_llm_chain = review_response_template | casual_llm | parser\nprofessional_llm_chain = review_response_template | professional_llm | parser\nresponse_json=[]\n@app.get('/')\ndef home():\n    return {\n        \"hello\"\n    }\n@app.post('/friendly_ai')\nasync def ai(request: Request):",
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
+        "label": "professional_llm_chain",
+        "kind": 5,
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "peekOfCode": "professional_llm_chain = review_response_template | professional_llm | parser\nresponse_json=[]\n@app.get('/')\ndef home():\n    return {\n        \"hello\"\n    }\n@app.post('/friendly_ai')\nasync def ai(request: Request):\n    # Initialize the response list for each request to prevent shared state issues",
         "detail": "reviewBot",
         "documentation": {}
     }
