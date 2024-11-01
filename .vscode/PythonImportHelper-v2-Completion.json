@@ -145,14 +145,6 @@
         "documentation": {}
     },
     {
-        "label": "friendly_llm",
-        "importPath": "reviewBot",
-        "description": "reviewBot",
-        "isExtraImport": true,
-        "detail": "reviewBot",
-        "documentation": {}
-    },
-    {
         "label": "restaurant_reviews",
         "kind": 5,
         "importPath": "request",
@@ -166,7 +158,7 @@
         "kind": 5,
         "importPath": "request",
         "description": "request",
-        "peekOfCode": "response = requests.post('http://127.0.0.1:8000/ai',json=restaurant_reviews)\nprint(response.status_code)\nprint(response.json())",
+        "peekOfCode": "response = requests.post('http://127.0.0.1:8000/professional_ai',json=restaurant_reviews)\nprint(response.status_code)\nprint(response.json())",
         "detail": "request",
         "documentation": {}
     },
@@ -175,7 +167,7 @@
         "kind": 2,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "def home():\n    return {\n        \"hello\"\n    }\n@app.post('/friendly_ai')\nasync def ai(request: Request):\n    # Initialize the response list for each request to prevent shared state issues\n    response_json = []\n    body = await request.json()\n    print(\"Request received\")",
+        "peekOfCode": "def home():\n    return {\n        \"hello\"\n    }\n@app.post('/friendly_ai')\nasync def ai(request: Request):\n    # Initialize the response list for each request to prevent shared state issues\n    response_json = []\n    body = await request.json()\n    print(\"Request received on endpoint friendly_ai\")",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -247,16 +239,34 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "chat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.\n        reply in a warm and professional manner just like how a professional human hotel manager would reply .\n        Input :{input}\n    \"\"\"\n)\nreview_response_template = ChatPromptTemplate.from_messages(\n    [\n        (",
+        "peekOfCode": "chat_prompt = PromptTemplate.from_template(\n    \"\"\"\n        you are a professional review system , your task is to reply to the human reviews after analysing the human sentiement from the input given.\n        reply in a warm and professional manner just like how a professional human hotel manager would reply .\n        Input :{input}\n    \"\"\"\n)\nfriendly_review_response_template = ChatPromptTemplate.from_messages(\n    [\n        (",
         "detail": "reviewBot",
         "documentation": {}
     },
     {
-        "label": "review_response_template",
+        "label": "friendly_review_response_template",
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "review_response_template = ChatPromptTemplate.from_messages(\n    [\n        (\n            \"system\",\n            \"You are an AI assistant for a restaurant. Your task is to reply to customer reviews \"\n            \"as if you are a human, in a warm, professional, and personal tone. \"\n            \"Analyze the review and determine if it is positive, neutral, or negative.\"\n            \"Make sure each response sounds unique and human-like. Don't sound robotic.\",\n        ),\n        (",
+        "peekOfCode": "friendly_review_response_template = ChatPromptTemplate.from_messages(\n    [\n        (\n            \"system\",\n            \"You are an AI assistant for a restaurant. Your task is to reply to customer reviews \"\n            \"as if you are a human, in a warm, professional, and personal tone. \"\n            \"Analyze the review and determine if it is positive, neutral, or negative.\"\n            \"Make sure each response sounds unique and human-like. Don't sound robotic.\",\n        ),\n        (",
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
+        "label": "casual_review_response_template",
+        "kind": 5,
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "peekOfCode": "casual_review_response_template = ChatPromptTemplate.from_messages(\n    [\n        (\n            \"system\",\n            \"You are an AI assistant for a restaurant. Your task is to reply to customer reviews \"\n            \"as if you are a human, in a warm, professional, and personal tone. \"\n            \"Analyze the review and determine if it is positive, neutral, or negative.\"\n            \"Make sure each response sounds unique and human-like. Don't sound robotic.\"\n            \"the response should not exceed a maximum of 5 SENTENCES\"\n        ),",
+        "detail": "reviewBot",
+        "documentation": {}
+    },
+    {
+        "label": "professional_review_response_template",
+        "kind": 5,
+        "importPath": "reviewBot",
+        "description": "reviewBot",
+        "peekOfCode": "professional_review_response_template = ChatPromptTemplate.from_messages(\n    [\n        (\n            \"system\",\n            \"You are an AI assistant for a restaurant. Your task is to reply to customer reviews \"\n            \"as if you are a human, in a warm, professional, and personal tone. \"\n            \"Analyze the review and determine if it is positive, neutral, or negative.\"\n            \"Make sure each response sounds unique and human-like. Don't sound robotic.\"\n            \"the response should not exceed a maximum of 3 SENTENCES\"\n        ),",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -274,7 +284,7 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "firendnly_llm_chain = review_response_template | friendly_llm | parser\ncasual_llm_chain = review_response_template | casual_llm | parser\nprofessional_llm_chain = review_response_template | professional_llm | parser\nresponse_json=[]\n@app.get('/')\ndef home():\n    return {\n        \"hello\"\n    }\n@app.post('/friendly_ai')",
+        "peekOfCode": "firendnly_llm_chain = friendly_review_response_template | friendly_llm | parser\ncasual_llm_chain = casual_review_response_template | casual_llm | parser\nprofessional_llm_chain = professional_review_response_template | professional_llm | parser\nresponse_json=[]\n@app.get('/')\ndef home():\n    return {\n        \"hello\"\n    }\n@app.post('/friendly_ai')",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -283,7 +293,7 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "casual_llm_chain = review_response_template | casual_llm | parser\nprofessional_llm_chain = review_response_template | professional_llm | parser\nresponse_json=[]\n@app.get('/')\ndef home():\n    return {\n        \"hello\"\n    }\n@app.post('/friendly_ai')\nasync def ai(request: Request):",
+        "peekOfCode": "casual_llm_chain = casual_review_response_template | casual_llm | parser\nprofessional_llm_chain = professional_review_response_template | professional_llm | parser\nresponse_json=[]\n@app.get('/')\ndef home():\n    return {\n        \"hello\"\n    }\n@app.post('/friendly_ai')\nasync def ai(request: Request):",
         "detail": "reviewBot",
         "documentation": {}
     },
@@ -292,7 +302,7 @@
         "kind": 5,
         "importPath": "reviewBot",
         "description": "reviewBot",
-        "peekOfCode": "professional_llm_chain = review_response_template | professional_llm | parser\nresponse_json=[]\n@app.get('/')\ndef home():\n    return {\n        \"hello\"\n    }\n@app.post('/friendly_ai')\nasync def ai(request: Request):\n    # Initialize the response list for each request to prevent shared state issues",
+        "peekOfCode": "professional_llm_chain = professional_review_response_template | professional_llm | parser\nresponse_json=[]\n@app.get('/')\ndef home():\n    return {\n        \"hello\"\n    }\n@app.post('/friendly_ai')\nasync def ai(request: Request):\n    # Initialize the response list for each request to prevent shared state issues",
         "detail": "reviewBot",
         "documentation": {}
     }

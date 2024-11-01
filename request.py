@@ -39,6 +39,6 @@ restaurant_reviews = {
         },
     ],
 }
-response = requests.post('http://127.0.0.1:8000/ai',json=restaurant_reviews)
+response = requests.post('http://127.0.0.1:8000/professional_ai',json=restaurant_reviews)
 print(response.status_code)
 print(response.json())

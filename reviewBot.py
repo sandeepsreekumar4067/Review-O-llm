@@ -13,7 +13,6 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from sklearn.metrics.pairwise import cosine_similarity
 from fastapi import FastAPI,Request
 from fastapi.middleware.cors import CORSMiddleware
-from reviewBot import friendly_llm
 print("initialising the llm")
 friendly_llm = ChatOllama(
     model="llama3.1",
@@ -53,7 +52,7 @@ chat_prompt = PromptTemplate.from_template(
         Input :{input}
     """
 )
-review_response_template = ChatPromptTemplate.from_messages(
+friendly_review_response_template = ChatPromptTemplate.from_messages(
     [
         (
             "system",
@@ -79,8 +78,60 @@ review_response_template = ChatPromptTemplate.from_messages(
         ),
     ]
 )
-
-
+casual_review_response_template = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            "You are an AI assistant for a restaurant. Your task is to reply to customer reviews "
+            "as if you are a human, in a warm, professional, and personal tone. "
+            "Analyze the review and determine if it is positive, neutral, or negative."
+            "Make sure each response sounds unique and human-like. Don't sound robotic."
+            "the response should not exceed a maximum of 5 SENTENCES"
+        ),
+        (
+            "user",
+            "Customer Name: {name}\n"
+            "Review: {review_content}\n"
+            "manager name : restaurant manager\n"
+            "customer rating:{rating}\n"
+            "restaurant name :{restaurant_name}",
+        ),
+        (
+            "assistant",
+            "Based on the review sentiment, craft a reply as a human restaurant manager would. "
+            "Be sure to address concerns, praise compliments, and be understanding. "
+            "Use variations in tone and phrasing, so that responses sound human each time."
+            "\n\nReply:",
+        ),
+    ]
+)
+professional_review_response_template = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            "You are an AI assistant for a restaurant. Your task is to reply to customer reviews "
+            "as if you are a human, in a warm, professional, and personal tone. "
+            "Analyze the review and determine if it is positive, neutral, or negative."
+            "Make sure each response sounds unique and human-like. Don't sound robotic."
+            "the response should not exceed a maximum of 3 SENTENCES"
+        ),
+        (
+            "user",
+            "Customer Name: {name}\n"
+            "Review: {review_content}\n"
+            "manager name : restaurant manager\n"
+            "customer rating:{rating}\n"
+            "restaurant name :{restaurant_name}",
+        ),
+        (
+            "assistant",
+            "Based on the review sentiment, craft a reply as a human restaurant manager would. "
+            "Be sure to address concerns, praise compliments, and be understanding. "
+            "Use variations in tone and phrasing, so that responses sound human each time."
+            "\n\nReply:",
+        ),
+    ]
+)
 
 print("model ready")
 
@@ -126,9 +177,9 @@ restaurant_reviews = {
 }
 
 
-firendnly_llm_chain = review_response_template | friendly_llm | parser
-casual_llm_chain = review_response_template | casual_llm | parser
-professional_llm_chain = review_response_template | professional_llm | parser
+firendnly_llm_chain = friendly_review_response_template | friendly_llm | parser
+casual_llm_chain = casual_review_response_template | casual_llm | parser
+professional_llm_chain = professional_review_response_template | professional_llm | parser
 
 response_json=[]
 
@@ -145,7 +196,7 @@ async def ai(request: Request):
     response_json = []
 
     body = await request.json()
-    print("Request received")
+    print("Request received on endpoint friendly_ai")
     reviews = body['reviews']
     restaurant_name = body['restaurant_name']
 
@@ -189,7 +240,7 @@ async def ai(request: Request):
     response_json = []
 
     body = await request.json()
-    print("Request received")
+    print("Request received on endpoint casual_ai")
     reviews = body['reviews']
     restaurant_name = body['restaurant_name']
 
@@ -232,7 +283,7 @@ async def ai(request: Request):
     response_json = []
 
     body = await request.json()
-    print("Request received")
+    print("Request received on endpoint professional ai")
     reviews = body['reviews']
     restaurant_name = body['restaurant_name']
 
